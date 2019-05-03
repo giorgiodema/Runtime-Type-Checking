@@ -12,7 +12,7 @@ def foo(a:int,b:int)->int:
     return c
 ```
 
-If you want foo to throw type exceptions (wrong parameter or return type, missing parameter or return type during definition) simply add the decorator ` @check ` to the function definition, like in the example.
+If you want foo to throw type exceptions (wrong parameter or return type, missing parameter or return type) simply add the decorator ` @check ` to the function definition, like in the example.
 ```python
 from check import check
 
