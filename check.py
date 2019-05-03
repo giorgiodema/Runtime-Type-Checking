@@ -46,7 +46,7 @@ def check(func):
             # last annotation (kwarg is the last argument in the function definition)
             if k not in ann.keys():
                 keys = list(ann.keys())
-                exptype = ann[keys[-1]] 
+                exptype = ann[keys[-2]] 
             else:
                 exptype = ann[k]
             recvtype = type(kwargs[k])
@@ -65,9 +65,9 @@ def check(func):
 
 
 @check
-def foo(a:int,b:int,**params:int)->int:
+def foo(a:int,b:int,**params:list)->int:
     return a+b
 
 d = {"uno":1,"due":2}
 
-foo(3,2,2,4,5.1,3)
+foo(3,2,c=[1,2])
