@@ -27,19 +27,28 @@ def check(func):
         print("kwargs:"+str(kwargs))
         
         # Check args
+        parname = None
         for i in range(len(args)):
-            parname = args_names[i]
-            exptype = ann[parname]
+            # if i >= arg_names-1 it means that args[i] is a *arg, so i do not update the
+            # expected type, since it's the last specified
+            if i<len(args_names)-1:
+                parname = args_names[i]
+                exptype = ann[parname]
             recvtype = type(args[i])
 
-            if parname=='args' or parname=='kwargs':
-                break
             if recvtype!=exptype:
                 raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
 
         # Check kwargs
         for k in kwargs.keys():
-            exptype = ann['kwargs'] if k not in ann.keys() else ann[k]
+            exptype = None
+            # if k is not in annotations, it means that k is a kwarg, so i take the type of the
+            # last annotation (kwarg is the last argument in the function definition)
+            if k not in ann.keys():
+                keys = list(ann.keys())
+                exptype = ann[keys[-1]] 
+            else:
+                exptype = ann[k]
             recvtype = type(kwargs[k])
             
             if recvtype!=exptype:
@@ -56,9 +65,9 @@ def check(func):
 
 
 @check
-def foo(a:int,b:int,**kwargs:int)->int:
+def foo(a:int,b:int,**params:int)->int:
     return a+b
 
 d = {"uno":1,"due":2}
 
-foo(3,2,d=8,uno=1.1, due=2)
+foo(3,2,2,4,5.1,3)
