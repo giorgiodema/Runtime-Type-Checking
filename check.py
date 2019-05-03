@@ -28,13 +28,16 @@ def check(func):
         
         # Check args
         parname = None
+        count = 0
         for i in range(len(args)):
             # if i >= arg_names-1 it means that args[i] is a *arg, so i do not update the
             # expected type, since it's the last specified
             if i<len(args_names)-1:
                 parname = args_names[i]
                 exptype = ann[parname]
+                count+=1
             recvtype = type(args[i])
+            parname = args_names[k-1]
 
             if recvtype!=exptype:
                 raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
