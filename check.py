@@ -25,8 +25,8 @@ def check(func):
         if "return" not in args_names:
             raise CheckTypeError(func.__name__,message="Missing return type")
 
-        if len(params)!=(len(args_names)-1):
-            raise CheckTypeError(func.__name__,message="Missing parameter type")
+        #if len(params)!=(len(args_names)-1):
+        #    raise CheckTypeError(func.__name__,message="Missing parameter type")
         
         for i in range(len(args_names)-1):
             parname = args_names[i]
@@ -43,4 +43,9 @@ def check(func):
     
     return wrapper
 
+@check
+def manz(a,b)->int:
+    print(a)
+    return 10
 
+manz(0,1)
