@@ -22,6 +22,10 @@ def check(func):
         ann = func.__annotations__
         args_names = list(ann.keys())
 
+        # if there're no annotations do not do the check
+        if ann == {}:
+            return func(*args,**kwargs)
+
         print("ann:"+str(ann))
         print("args:"+str(args))
         print("kwargs:"+str(kwargs))
@@ -57,7 +61,7 @@ def check(func):
             if recvtype!=exptype:
                 raise CheckTypeError(func.__name__,parname=k,recvtype=str(recvtype),exptype=str(exptype))
 
-        ret =  func(*args)
+        ret =  func(*args,**kwargs)
         if "return" in ann.keys():
             if type(ret) != ann["return"]:
                 raise CheckTypeError(func.__name__,recvret=str(type(ret)),expret=str(ann["return"]))
@@ -68,7 +72,7 @@ def check(func):
 
 
 @check
-def foo(a:int,b:int,**params:list)->int:
+def foo(a,b,**params):
     return a+b
 
 d = {"uno":1,"due":2}
