@@ -30,20 +30,20 @@ def check(func):
         for i in range(len(args)):
             parname = args_names[i]
             exptype = ann[parname]
-            rectype = type(args[i])
+            recvtype = type(args[i])
 
             if parname=='args' or parname=='kwargs':
                 break
-            if rectype!=exptype:
-                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(rectype),exptype=str(exptype))
+            if recvtype!=exptype:
+                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
 
         # Check kwargs
         for k in kwargs.keys():
             exptype = ann['kwargs'] if k not in ann.keys() else ann[k]
             recvtype = type(kwargs[k])
             
-            if rectype!=exptype:
-                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(rectype),exptype=str(exptype))
+            if recvtype!=exptype:
+                raise CheckTypeError(func.__name__,parname=k,recvtype=str(recvtype),exptype=str(exptype))
 
         ret =  func(*args)
         if "return" in ann.keys():
@@ -61,4 +61,4 @@ def foo(a:int,b:int,**kwargs:int)->int:
 
 d = {"uno":1,"due":2}
 
-foo(3,2,d=8,uno=1, due=2)
+foo(3,2,d=8,uno=1.1, due=2)
