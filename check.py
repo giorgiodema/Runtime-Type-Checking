@@ -17,28 +17,45 @@ class CheckTypeError(Exception):
 
 def check(func):
 
-    def wrapper(*params):
+    def wrapper(*args,**kwargs):
 
-        args = func.__annotations__
-        args_names = list(args.keys())
+        ann = func.__annotations__
+        args_names = list(ann.keys())
 
-        if "return" not in args_names:
-            raise CheckTypeError(func.__name__,message="Missing return type")
 
-        #if len(params)!=(len(args_names)-1):
-        #    raise CheckTypeError(func.__name__,message="Missing parameter type")
         
-        for i in range(len(args_names)-1):
-            parname = args_names[i]
-            exptype = args[parname]
-            rectype = type(params[i])
+        # Check args
+        parname = None
+        for i in range(len(args)):
+            # if i >= arg_names-1 it means that args[i] is a *arg, so i do not update the
+            # expected type, since it's the last specified
+            if i<len(args_names)-1:
+                parname = args_names[i]
+                exptype = ann[parname]
+            recvtype = type(args[i])
 
-            if rectype!=exptype:
-                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(rectype),exptype=str(exptype))
+            if recvtype!=exptype:
+                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
 
-        ret =  func(*params)
-        if type(ret) != args["return"]:
-            raise CheckTypeError(func.__name__,recvret=str(type(ret)),expret=str(args["return"]))
+        # Check kwargs
+        for k in kwargs.keys():
+            exptype = None
+            # if k is not in annotations, it means that k is a kwarg, so i take the type of the
+            # last annotation (kwarg is the last argument in the function definition)
+            if k not in ann.keys():
+                keys = list(ann.keys())
+                exptype = ann[keys[-2]] 
+            else:
+                exptype = ann[k]
+            recvtype = type(kwargs[k])
+            
+            if recvtype!=exptype:
+                raise CheckTypeError(func.__name__,parname=k,recvtype=str(recvtype),exptype=str(exptype))
+
+        ret =  func(*args)
+        if "return" in ann.keys():
+            if type(ret) != ann["return"]:
+                raise CheckTypeError(func.__name__,recvret=str(type(ret)),expret=str(ann["return"]))
         return ret
     
     return wrapper
@@ -48,4 +65,4 @@ def manz(a,b)->int:
     print(a)
     return 10
 
-manz(0,1)
+
