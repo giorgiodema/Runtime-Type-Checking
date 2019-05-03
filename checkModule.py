@@ -3,15 +3,18 @@ from inspect import getmembers, isfunction
 
 def checkModule(modname):
 	obj_list = getmembers(modname)
-	for obj in obj_list:
+	for func in obj_list:
 		# skip non-functions
-		if not isfunction(obj):
+		if not isfunction(func):
 			continue
 
 		# skip builtins
-		fname = obj.__name__
+		fname = func.__name__
 		if fname.startswith('__') and fname.endswith('__'):
 			continue
+
+		# patch __call__ with check wrapper
+		func.__call__ = 
 		
 		
 
