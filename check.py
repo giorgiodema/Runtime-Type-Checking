@@ -40,8 +40,10 @@ def check(func):
                 parname = args_names[i]
                 exptype = ann[parname]
                 count+=1
+            else:
+                parname = args_names[count-2]
             recvtype = type(args[i])
-            parname = args_names[count-2]
+            
 
             if recvtype!=exptype:
                 raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
