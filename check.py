@@ -37,7 +37,7 @@ def check(func):
                 exptype = ann[parname]
                 count+=1
             recvtype = type(args[i])
-            parname = args_names[k-1]
+            parname = args_names[count-1]
 
             if recvtype!=exptype:
                 raise CheckTypeError(func.__name__,parname=parname,recvtype=str(recvtype),exptype=str(exptype))
