@@ -14,7 +14,7 @@ def checkModule(modname):
 			continue
 
 		# patch __call__ with check wrapper
-		func.__call__ = 
+		func.__call__ = check(func.__call__)
 		
 		
 
