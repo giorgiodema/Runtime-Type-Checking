@@ -17,30 +17,48 @@ class CheckTypeError(Exception):
 
 def check(func):
 
-    def wrapper(*params):
+    def wrapper(*args,**kwargs):
 
-        args = func.__annotations__
-        args_names = list(args.keys())
+        ann = func.__annotations__
+        args_names = list(ann.keys())
 
-        if "return" not in args_names:
-            raise CheckTypeError(func.__name__,message="Missing return type")
-
-        if len(params)!=(len(args_names)-1):
-            raise CheckTypeError(func.__name__,message="Missing parameter type")
+        print("ann:"+str(ann))
+        print("args:"+str(args))
+        print("kwargs:"+str(kwargs))
         
-        for i in range(len(args_names)-1):
+        # Check args
+        for i in range(len(args)):
             parname = args_names[i]
-            exptype = args[parname]
-            rectype = type(params[i])
+            exptype = ann[parname]
+            rectype = type(args[i])
 
+            if parname=='args' or parname=='kwargs':
+                break
             if rectype!=exptype:
                 raise CheckTypeError(func.__name__,parname=parname,recvtype=str(rectype),exptype=str(exptype))
 
-        ret =  func(*params)
-        if type(ret) != args["return"]:
-            raise CheckTypeError(func.__name__,recvret=str(type(ret)),expret=str(args["return"]))
+        # Check kwargs
+        for k in kwargs.keys():
+            exptype = ann['kwargs'] if k not in ann.keys() else ann[k]
+            recvtype = type(kwargs[k])
+            
+            if rectype!=exptype:
+                raise CheckTypeError(func.__name__,parname=parname,recvtype=str(rectype),exptype=str(exptype))
+
+        ret =  func(*args)
+        if "return" in ann.keys():
+            if type(ret) != ann["return"]:
+                raise CheckTypeError(func.__name__,recvret=str(type(ret)),expret=str(ann["return"]))
         return ret
     
     return wrapper
 
 
+
+@check
+def foo(a:int,b:int,**kwargs:int)->int:
+    return a+b
+
+d = {"uno":1,"due":2}
+
+foo(3,2,d=8,uno=1, due=2)
