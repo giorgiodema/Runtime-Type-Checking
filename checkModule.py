@@ -1,39 +1,23 @@
 
-from inspect import getmembers, ismethod
+import sys
+import types
 from check import check
-from pprint import pprint as print
 
-def merda():
-	pass
+
 
 def checkModule(modname):
-	obj_list = dir(modname)
-
-	print(obj_list)
-	for obj in obj_list:
-		func = obj[1]
-		#print(str(type(func)))
-		# skip non-functions
-		#if str(type(func)) == "<class 'builtin_function_or_method'>":
-		#	continue
-
-		# skip builtins
-		try:
-			fname = func.__name__
-			#print(func.__name__)
-		except:
+	for modulename, module in sys.modules.items():
+		if modulename != modname:
 			continue
 
-		if fname.startswith('__') and fname.endswith('__'):
-			continue
+		for fname in dir(module):
+			func = getattr(module, fname)
+			if type(func) != types.FunctionType:
+				continue
 
-		# patch __call__ with check wrapper
-		try:
-			func.__call__ = check(func.__call__)
-		except:
-			pass
-		
-		
+			print('patching function', fname)
+			setattr(module, fname, check(func))
+
 
 
 
